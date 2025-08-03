@@ -108,16 +108,51 @@ velocity: 0.0,
 
 
 I. Setup
+- import `bracket_lib::prelude*;`
+- `GameMode` enum for representing three  game states: `Menu`, `Playing`, and `End`
+- set constants for screen width, height, and frame duration
+- screen is 80x50, game runs at 75ms per frame (approx 13fps)
 
 II. State Management
+- defined by `State` struct
+- aware of player location
+- tracks time between frames
+- aware of current `GameMode` state
 
 III. Player Entity
+- defined by `Player` struct
+- maintains an X (L/R) and Y (U/D) position
+- maintains velocity
+- represented on screen by "@" character
 
 IV. Game Loop
+- `main` function called at start of program
+- `main_loop` called in `main` which initiates a new game State
+- `State::new()` instances default to `GameMode::Menu`
+- `tick` is continuously called by `main_loop`
+- when matched on `GameMode::Menu`, `main_menu` is called and welcome screen is displayed
 
-V. Movement
+V. Gameplay
+- `play` called when GameState matches on `GameMode::Playing`
+- sets background to blue
+- sets framerate time
+- conditionally matches on `VirtualKeyCode::Space` when spacebar is pressed
+- this triggers the `flap` function
+- `flap` function sets velocity to -2.0 (creates upward jump when spacebar pressed)
+- checks if player's Y axis is greater than the constant-set `SCREEN_HEIGHT`
+- if so, player is dead and `GameMode::End` is set
 
-VI. Lifecycle
+VI. Movement
+- gravity_and_move` called conditionally based on frame timing in `play` function
+- frame timing accumulates milliseconds via `ctx.frame_time_ms`
+- when accumulated time exceeds `FRAME_DURATION`, timer resets and movement triggers
+- velocity increases by 0.2 each frame until capped at 2.0 (gravity acceleration))
+- Y increases by current velocity converted to integer (player falls down)
+- X increases by 1 each frame (creates scroll effect)
+- Y position clamped to minimum of 0 (prevents moving above screen top)
+- movement occurs at controlled 13fps while rendering happens at full framerate
+
+VII. Lifecycle
 
 graph TD
     A[Game Starts] --> B[Main Menu]

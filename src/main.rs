@@ -153,5 +153,6 @@ fn main() -> BError {
         .with_title("Flappy Bird")
         .build()?;
 
+    // Runs the BTerm application, calling into the provided gamestate handler every tick.
     main_loop(context, State::new())
 }
